@@ -1,14 +1,14 @@
 # Filliz → Sage 50 — Automatisation Comptable IA
 ![Badge MVP](https://img.shields.io/badge/Status-MVP%20en%20Production-green) ![N8N](https://img.shields.io/badge/Stack-N8N%20%2B%20Claude%20Sonnet%204-blue) ![RGPD](https://img.shields.io/badge/Conformité-RGPD%20%2B%20AI%20Act-orange) ![Version](https://img.shields.io/badge/Version-1.1-lightgrey)
 
-Workflow d'automatisation intelligent qui transforme, vérifie et livre les fichiers de facturation Filliz au format Sage 50 — sans qu'Amina n'ouvre Excel une seule fois.
+Workflow d'automatisation intelligent qui transforme, vérifie et livre les fichiers de facturation Filliz au format Sage 50 — sans que le pôle comptabilité n'ouvre Excel une seule fois.
 
 ---
 
 ## 🎯 Problème & Solution
 
 **Problème :** Filliz et Sage 50 ne parlent pas le même langage. Chaque fichier reçu nécessitait une transformation manuelle de 30 à 60 minutes : dates à recomposer, colonnes inutiles, comptes imputés incomplets, codes de paiement à calculer — absorbé seul par la comptable, sans filet de sécurité.  
-**Solution IA :** Workflow N8N + Claude Sonnet 4 qui intercepte le fichier dès réception par mail, le transforme en JavaScript, le vérifie par IA sur 7 règles comptables, et notifie Amina sur Teams avec le fichier prêt à importer.  
+**Solution IA :** Workflow N8N + Claude Sonnet 4 qui intercepte le fichier dès réception par mail, le transforme en JavaScript, le vérifie par IA sur 7 règles comptables, et notifie le comptable sur Teams avec le fichier prêt à importer.  
 **Impact :** -97% temps de traitement (60 min → 2 min), zéro intervention manuelle, vérification IA systématique avant chaque import.
 
 ---
@@ -26,7 +26,7 @@ Workflow d'automatisation intelligent qui transforme, vérifie et livre les fich
 ```
 OPENROUTER_API_KEY   → Clé API OpenRouter
 ONEDRIVE_FOLDER_ID   → 01BO2PU7LHJSVPX5GDQZBYZOBHWKSGMFDZ
-TEAMS_CHAT_ID        → ID du chat Teams Amina
+TEAMS_CHAT_ID        → ID du chat Teams comptable
 ```
 
 ---
@@ -71,7 +71,7 @@ Basic LLM Chain (Claude Sonnet 4 — temp. 0.1)
    Convert to File (CSV;)              Error detected
    Upload OneDrive                     Warning IT Support (Teams)
    Send message Teams + lien
-   Confirmation Amina (24h timeout)
+   Confirmation Comptable (24h timeout)
 ```
 
 ---
@@ -85,10 +85,10 @@ La transformation (nettoyage des numéros de pièce, recomposition des dates, ta
 Première version du prompt : l'IA vérifiait "tout ce qui semblait anormal". Elle signalait des anomalies inventées (totaux débit/crédit, sessions dupliquées). Solution : borner strictement à 7 règles numérotées, répétées en début ET fin de prompt, avec instruction explicite d'abstention hors périmètre. Contre-intuitif mais efficace : moins de liberté = moins d'hallucination.
 
 **Arbitrage 3 — Recall prioritaire sur Precision**  
-En comptabilité, manquer une anomalie (faux négatif) est un incident critique — erreur d'import dans Sage 50. Signaler une anomalie qui n'existe pas (faux positif) coûte 5 minutes de vérification à Amina. La règle d'arbitrage est documentée : faux négatif = Niveau 1 / faux positif = Niveau 3. Température 0.1 + few-shot examples biaisent l'agent vers le Recall.
+En comptabilité, manquer une anomalie (faux négatif) est un incident critique — erreur d'import dans Sage 50. Signaler une anomalie qui n'existe pas (faux positif) coûte 5 minutes de vérification au comptable. La règle d'arbitrage est documentée : faux négatif = Niveau 1 / faux positif = Niveau 3. Température 0.1 + few-shot examples biaisent l'agent vers le Recall.
 
 **Arbitrage 4 — Human-in-the-loop non désactivable**  
-Le système aurait pu importer directement dans Sage 50 après validation IA. Refusé catégoriquement : une erreur comptable non détectée en production a des conséquences légales. Amina confirme chaque import via Teams. Ce n'est pas une friction — c'est le garde-fou final qui rend le système déployable dans un contexte réglementé.
+Le système aurait pu importer directement dans Sage 50 après validation IA. Refusé catégoriquement : une erreur comptable non détectée en production a des conséquences légales. Le comptable confirme chaque import via Teams. Ce n'est pas une friction — c'est le garde-fou final qui rend le système déployable dans un contexte réglementé.
 
 **Arbitrage 5 — Température 0.1 vs 0**  
 Temperature 0 produit des sorties 100% déterministes mais peut bloquer le raisonnement sur des cas limites. 0.1 conserve une légère variance contrôlée, suffisante pour que l'agent "raisonne" sur les avoirs et les frais équipement sans inventer. Couplé au format contraint (Structured Output Parser), le risque de dérive reste négligeable.
