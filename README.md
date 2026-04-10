@@ -177,6 +177,6 @@ Temperature 0 produit des sorties 100% déterministes mais peut bloquer le raiso
 ## 🤝 Contact
 
 Issues et suggestions bienvenues !  
-Portfolio : [github.com/yanisse-kemel] | LinkedIn : [linkedin.com/in/yanisse-kemel] | ✉️ y.kemel@cfamederic.com
+Portfolio : [github.com/yanisse-devai] | LinkedIn : [linkedin.com/in/yanisse-kemel] | ✉️ yanissekemel@gmail.com
 
 *Projet interne CFA Médéric — Yanisse Kemel, Product Manager IA*
